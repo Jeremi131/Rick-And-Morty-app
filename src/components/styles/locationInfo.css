@@ -12,7 +12,9 @@
 .info_name{
     text-align:center ;
     margin-bottom: 1rem;
-    font-size: 24px;
+    font-size: 35px;
+    color: rgb(0, 217, 255);
+    -webkit-text-stroke: 0.1px rgb(166, 255, 0);
 }
 
 .location_info{
