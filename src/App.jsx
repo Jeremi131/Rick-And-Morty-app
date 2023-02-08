@@ -10,83 +10,82 @@ import imageError from '/src/assets/imageError.png'
 
 function App() {
 
-  const [location, setLocation] = useState()
-  const [numberLocation, setNumberLocation] = useState(getRandomLocation)
+  const [infoLocation, setInfoLocation] = useState();
+  const [location, setLocation] = useState(getRandomLocation());
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [listLocation, setListLocation] = useState()
   const [isShow, setIsShow] = useState(false)
-  const [displaySuggestions, setDisplaySuggestions] = useState('none')
   const [getValue, setGetValue] = useState()
 
 
   useEffect(() => {
-    const url = `https://rickandmortyapi.com/api/location/${numberLocation}`
+    const url = `https://rickandmortyapi.com/api/location/${location}`
     axios.get(url)
       .then(res => {
-        setLocation(res.data)
+        setInfoLocation(res.data)
         setHasError(false)
+        setIsShow(false)
       })
       .catch(err => {
         console.log(err)
         setHasError(true)
+        setIsShow(false)
       })
       .finally(() => setTimeout(() => setIsLoading(false), 2000))
 
-  }, [numberLocation])
+  }, [location])
 
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    if (e.target.inputLocation.value.trim().length === 0) {
-      setNumberLocation(getRandomLocation())
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setHasError(false)
+    clearSelectValue()
+    if (e.target.inputLocation.value === "0" || e.target.inputLocation.value.length === 0) {
+      setHasError(true);
     } else {
-      
-      setNumberLocation(e.target.inputLocation.value.trim())
+      setLocation(e.target.inputLocation.value.trim());
+      e.target.inputLocation.value = e.target.inputLocation.value.trim();
     }
-    e.target.inputLocation.value = e.target.inputLocation.value.trim()
-    setDisplaySuggestions('none')
-
-  }
-
-  const handleChange = e => {
-    const url = `https://rickandmortyapi.com/api/location/?name=${e.target.value.trim()}`
-    axios.get(url)
-      .then(res => setListLocation(res.data.results))
-      .catch(err => console.log(err))
-      setDisplaySuggestions('flex')
-  }
-
-  const handleFocus = e => {
-    e.target.value = ""
-    clearInput()
-  }
-
-  // const handleBlur = () => {
-  //   setDisplaySuggestions('none')
-  // };
-
-  const handleClickList = (loc) => {
-    setNumberLocation(loc.id)
-    setDisplaySuggestions('none')
-    setGetValue(loc.name)
-  }
-
-  const clearInput = () => {
-    setGetValue(null);
   };
 
 
+  const handleChange = e => {
+    clearSelectValue()
+    const inputValue = e.target.value.trim();
+    if (inputValue) {
+      const url = `https://rickandmortyapi.com/api/location/?name=${inputValue}`;
+      axios.get(url)
+        .then(res => setListLocation(res.data.results))
+        .catch(err => console.log(err));
+      setIsShow(true);
+    } else {
+      setListLocation([]);
+      setIsShow(false);
+    }
+  };
+
+  const handleFocus = e => {
+    e.target.value = ""
+  }
+
+  const clearSelectValue = () => {
+    setGetValue(null);
+  };
+
+  const handleClickList = (loc) => {
+    setLocation(loc.id)
+    setGetValue(loc.name)
+  }
+
   return (
-    <div className="App">
+    <div className="App" onClick={() => setIsShow(false)}>
       {
         isLoading ?
           <div className='load_screen'>
             <img className='load_image' src={loading} alt="" />
           </div>
-
           :
-
           <>
             <div className='img_app'>
               <img className='logo' src="./assets/Rick_and_Morty.webp" alt="" />
@@ -95,18 +94,20 @@ function App() {
               <input
                 className='form_input'
                 id='inputLocation'
-                type="text"
                 value={getValue}
+                type="text"
                 onChange={handleChange}
-                onFocus={handleFocus} 
-                // onBlur={handleBlur}
+                onFocus={handleFocus}
+                placeholder='Insert location o Name Location'
               />
-              <button className='form_button'>Search</button>
-              {
-                <ul className='suggestions' style={{ display: displaySuggestions }}>
+
+              <button className='form_button' >Search</button>
+
+              {isShow &&
+                <ul className='suggestions' >
                   {
                     listLocation?.map(loc => (
-                      <li className='list'  onClick={() =>  handleClickList(loc)} key={loc.id}>{loc.name}</li>
+                      <li className='list' onClick={() => handleClickList(loc)} key={loc.id}>{loc.name}</li>
                     ))
                   }
                 </ul>
@@ -127,15 +128,13 @@ function App() {
             <img className='imageError' src={imageError} alt="" />
           </div>
           :
-
           <>
-
             <div className='location_container'>
-              <LocationInfo location={location} />
+              <LocationInfo infoLocation={infoLocation} />
             </div>
             <div className='residents_container'>
               {
-                location?.residents.map(url => (
+                infoLocation?.residents.map(url => (
                   <ResidentInfo
                     key={url}
                     url={url}
