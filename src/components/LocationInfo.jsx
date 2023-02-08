@@ -1,28 +1,34 @@
 import React from 'react'
 import './styles/locationInfo.css'
 
-const LocationInfo = ({location}) => {
-  return (
-   <article className='location'>
-    <h3 className='info_name'> {location?.name}</h3>
+const LocationInfo = ({ infoLocation }) => {
 
-    <ul className='location_info'>
+  return (
+    <article className='location'>
+      <h3 className='info_name'> {infoLocation?.name}</h3>
+
+      <ul className='location_info'>
+        <li className='location_item'>
+          <span className='info_label'>Id </span>
+          {infoLocation?.id}
+        </li>
         <li className='location_item'>
           <span className='info_label'>Type: </span>
-          {location?.type}
+          {infoLocation?.type}
         </li>
+
 
         <li className='location_item'>
           <span className='info_label'>Dimension: </span>
-          {location?.dimension}
+          {infoLocation?.dimension}
         </li>
 
         <li className='location_item'>
           <span className='info_label'>Population: </span>
-          {location?.residents.length}
+          {infoLocation?.residents?.length}
         </li>
-    </ul>
-   </article>
+      </ul>
+    </article>
   )
 }
 
