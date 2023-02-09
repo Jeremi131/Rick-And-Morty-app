@@ -1,4 +1,6 @@
 import React from 'react'
+import marca from '/src/assets/marca.png'
+
 
 const Footer = () => {
     return (
@@ -16,8 +18,14 @@ const Footer = () => {
                     <i className='bx box_icon bxl-linkedin'></i>
                 </a>
             </footer>
-            <p className='credits'>MADE BY JEREMI CASTELLANO</p>
+            <div className='credits'>
+                <p className='text_credits' >MADE BY</p>
+                <img className='marca_image' src={marca} alt="" />
+                <p className='text_credits'>ALL RIGHTS RESERVED</p>
+            </div>
         </article>
+
+
     )
 }
 
